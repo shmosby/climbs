@@ -25,6 +25,5 @@ jobs:
 
       # Validate JSON
       - name: Validate JSON
-        uses: docker://orrosenblatt/validate-json-action:latest
-        env:
-          INPUT_JSONS: counts.json
+        run: 
+          jq -e . >/dev/null 2>&1 <<< $cat count.json
