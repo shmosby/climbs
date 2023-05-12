@@ -24,5 +24,4 @@ jobs:
       # Validate JSON
       - name: Validate JSON
         run: |
-          ls
-          cat test.json
+          echo $(cat test.json)
