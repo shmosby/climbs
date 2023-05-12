@@ -23,5 +23,6 @@ jobs:
 
       # Validate JSON
       - name: Validate JSON
-        run: 
+        run:
+          ls
           cat test.json
