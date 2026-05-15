@@ -349,7 +349,7 @@ HTML_TEMPLATE = """\
 PHOTO_CARD_TEMPLATE = """\
   <div class="photo-card" tabindex="0" data-index="{index}">
     <div class="photo-frame">
-      <img src="../{src}" alt="{alt}" loading="lazy">
+      <img src="{src}" alt="{alt}" loading="lazy">
     </div>
   </div>"""
 
