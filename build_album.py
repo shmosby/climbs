@@ -16,7 +16,7 @@ from pathlib import Path
 ALBUM_TITLE      = "Our Little Album"          # Default title (override with --title)
 ALBUM_SUBTITLE   = "A collection of memories"  # Subtitle shown beneath the title
 PHOTOS_DIR       = "photos"                    # Directory scanned for images
-OUTPUT_FILE      = "docs/index.html"               # Output HTML file
+OUTPUT_FILE      = "index.html"               # Output HTML file
 
 SUPPORTED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif"}
 
