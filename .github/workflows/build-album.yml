@@ -21,7 +21,7 @@ env:
   ALBUM_TITLE:    "Our Little Album"
   ALBUM_SUBTITLE: "A collection of memories"
   PHOTOS_DIR:     "photos"
-  OUTPUT_FILE:    "index.html"
+  OUTPUT_FILE:    "docs/index.html"
   # ────────────────────────────────────────────────────────────────────────
 
 jobs:
@@ -74,11 +74,11 @@ jobs:
           git push
 
       # 6 · Upload the site to GitHub Pages
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: "."          # serve from repo root (index.html + photos/)
+      # - name: Upload Pages artifact
+      #   uses: actions/upload-pages-artifact@v3
+      #   with:
+      #     path: "."          # serve from repo root (index.html + photos/)
 
-      # 7 · Deploy to GitHub Pages
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+      # # 7 · Deploy to GitHub Pages
+      # - name: Deploy to GitHub Pages
+      #   uses: actions/deploy-pages@v4
