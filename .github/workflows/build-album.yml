@@ -1,0 +1,84 @@
+name: Build & Deploy Photo Album
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "photos/**"          # rebuild when photos are added/removed
+      - "build_album.py"     # rebuild when the script changes
+      - ".github/workflows/build-album.yml"
+
+  workflow_dispatch:         # allow manual trigger from the Actions tab
+    inputs:
+      title:
+        description: "Album title (overrides default)"
+        required: false
+        default: ""
+
+env:
+  # ── Change these to customise your album ────────────────────────────────
+  ALBUM_TITLE:    "Our Little Album"
+  ALBUM_SUBTITLE: "A collection of memories"
+  PHOTOS_DIR:     "photos"
+  OUTPUT_FILE:    "index.html"
+  # ────────────────────────────────────────────────────────────────────────
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write      # needed to push index.html back to the repo
+      pages: write         # needed for GitHub Pages deployment
+      id-token: write
+
+    steps:
+      # 1 · Check out the full repo (including photos/)
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2 · Set up Python (no third-party deps — stdlib only)
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # 3 · Resolve the album title
+      #     Priority: manual dispatch input > env variable
+      - name: Resolve album title
+        id: resolve_title
+        run: |
+          TITLE="${{ github.event.inputs.title }}"
+          if [ -z "$TITLE" ]; then
+            TITLE="${{ env.ALBUM_TITLE }}"
+          fi
+          echo "title=$TITLE" >> "$GITHUB_OUTPUT"
+
+      # 4 · Build index.html
+      - name: Build album
+        run: |
+          python build_album.py \
+            --title      "${{ steps.resolve_title.outputs.title }}" \
+            --subtitle   "${{ env.ALBUM_SUBTITLE }}" \
+            --photos-dir "${{ env.PHOTOS_DIR }}" \
+            --output     "${{ env.OUTPUT_FILE }}"
+
+      # 5 · Commit index.html back to main so it's part of the repo
+      #     (skip if nothing changed — avoids empty commits)
+      - name: Commit generated index.html
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "${{ env.OUTPUT_FILE }}"
+          git diff --cached --quiet || git commit -m "chore: rebuild album [skip ci]"
+          git push
+
+      # 6 · Upload the site to GitHub Pages
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."          # serve from repo root (index.html + photos/)
+
+      # 7 · Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
